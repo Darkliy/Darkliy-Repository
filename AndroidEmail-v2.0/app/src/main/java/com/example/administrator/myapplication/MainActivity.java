@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String username1=username.getText().toString();
-                if(username1==""||username1==null){
+                if(username1.equals("")){
                     username.setHint("用户名不能为空");
                 }else{
                     boolean hasUser = false;
@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
                             send.setEnabled(true);
                             reset.setEnabled(true);
                             login.setEnabled(false);
+                            username.setEnabled(false);
                             hasUser = true;
                             break;
                         }
