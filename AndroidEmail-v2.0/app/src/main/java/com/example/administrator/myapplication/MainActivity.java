@@ -10,7 +10,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
-    private EditText username, from, to, message;
+    private EditText username, from, to, message,subject;
     private Spinner receiverList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         from = findViewById(R.id.from);
         to = findViewById(R.id.to);
         message = findViewById(R.id.message);
+        subject=findViewById(R.id.subject);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,11 +87,21 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-    }
-    public void resetClick(View v){
-        Intent intent=new Intent();
-        intent.setClassName(this,"com.example.administrator.myapplication.MainActivity");
-        startActivity(intent);
-        this.finish();
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                username.setText(null);
+                username.setEnabled(true);
+                login.setEnabled(true);
+                reset.setEnabled(false);
+                to.setText(null);
+                receiverList.setSelection(0);
+                from.setText(null);
+                subject.setText(null);;
+                message.setText(getResources().getString(R.string.nchu));
+                send.setEnabled(false);
+                status.setText(null);
+            }
+        });
     }
 }
