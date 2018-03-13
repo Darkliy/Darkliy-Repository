@@ -1,5 +1,6 @@
 package com.example.administrator.myapplication;
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -10,7 +11,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
-    private EditText username, from, to, message,subject;
+    private EditText username, to, message,subject;
+    private TextView from;
     private Spinner receiverList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         receiverList=findViewById(R.id.receiverList);
         final Button login = findViewById(R.id.login);
         final Button reset=findViewById(R.id.reset);
+        final Button more=findViewById(R.id.more);
         final TextView status=findViewById(R.id.status);
         assert reset!=null;
         assert login != null;
@@ -32,8 +35,9 @@ public class MainActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username1=username.getText().toString();
-                if(username1.equals("")){
+                String username1=username.getText().toString().trim();
+                if(username1.equals("")||username1==null){
+                    username.setText(null);
                     username.setHint("用户名不能为空");
                 }else{
                     boolean hasUser = false;
@@ -64,7 +68,9 @@ public class MainActivity extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(to.getText().toString().equals("")||to.getText().toString()==null){
+                String address=to.getText().toString().trim();
+                if(address.equals("")||address==null){
+                    to.setText(null);
                    status.setText("收件人不能为空!");
                 }else{
                     Toast.makeText(MainActivity.this, "正在向" + to.getText()
@@ -87,20 +93,62 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder=new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("选择常用联系人");
+                String[] man=MainActivity.this.getResources().getStringArray(R.array.receiverList);
+                final String[] man1=new String[man.length-1];
+                for(int i=0;i<man1.length;i++){
+                    man1[i]=man[i+1];
+                }
+                builder.setItems(man1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        to.setText(man1[which]);
+                    }
+                });
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+            }
+        });
+
         reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                username.setText(null);
-                username.setEnabled(true);
-                login.setEnabled(true);
-                reset.setEnabled(false);
-                to.setText(null);
-                receiverList.setSelection(0);
-                from.setText(null);
-                subject.setText(null);;
-                message.setText(getResources().getString(R.string.nchu));
-                send.setEnabled(false);
-                status.setText(null);
+                AlertDialog.Builder builder=new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("提示");
+                builder.setMessage("确定注销用户吗?");
+                builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        username.setHint("用户名");
+                        username.setEnabled(true);
+                        login.setEnabled(true);
+                        reset.setEnabled(false);
+                        to.setText(null);
+                        receiverList.setSelection(0);
+                        from.setText(null);
+                        subject.setText(null);;
+                        message.setText(getResources().getString(R.string.nchu));
+                        send.setEnabled(false);
+                        status.setText(null);
+                    }
+                });
+               builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialog, int which) {
+                       dialog.dismiss();
+                   }
+               });
+               builder.create().show();
             }
         });
     }
